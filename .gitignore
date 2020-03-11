@@ -1,7 +1,8 @@
 .DS_Store
 vendor
 .idea
-
+*.png
 *.pdf
 *.zip
 db/
+database.*
