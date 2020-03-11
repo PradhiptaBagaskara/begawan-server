@@ -5,4 +5,4 @@ vendor
 *.pdf
 *.zip
 db/
-database.*
+database.php

@@ -81,7 +81,7 @@ $db['default'] = array(
 	// 'password' => '',
 	// 'database' => 'money_manager',
 	// online
-	'username' => ' begawanp_root ',
+	'username' => 'begawanp_root',
 	'password' => 'Oneng_16',
 	'database' => 'begawanp_begawan',
 	// end
