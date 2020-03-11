@@ -27,7 +27,7 @@ class M_pdf extends CI_Model {
         $pdf->SetFooterInfo("Laporan Transaksi - ".$proyek->nama_proyek);
 
         $pdf->SetFont('Arial','',12);
-        $pdf->Cell(40,6,'Nama proyek ',0,'c');
+        $pdf->Cell(40,6,'Nama Pekerjaan ',0,'c');
         $pdf->Cell(3,6,":",0,'c');
         $pdf->Cell(0,6,$proyek->nama_proyek,0,'c');
         $pdf->Ln();
@@ -39,7 +39,7 @@ class M_pdf extends CI_Model {
         $pdf->Cell(0,6,strftime($date),0,'c');
 
         $pdf->Ln();
-        $pdf->Cell(40,6,'Modal proyek ',0,'c');
+        $pdf->Cell(40,6,'Nilai Pekerjaan ',0,'c');
         $pdf->Cell(3,6,":",0,'c');
         $pdf->Cell(0,6,$this->api->rupiah($proyek->modal),0,'c');
         
@@ -101,15 +101,15 @@ class M_pdf extends CI_Model {
         $pdf->Ln();
 
 
-	    $pdf->Cell(225, 10, "SELISIH (modal - total)",1,0,'C');
+	    $pdf->Cell(225, 10, "SELISIH (nilai - total)",1,0,'C');
 	    $pdf->Cell(40, 10, $this->api->rupiah($proyek->modal-$total),1,0);
 
 
 	    $fname =  "laporan - ".$proyek->nama_proyek." - ".strftime('%d%m%Y', time()).".pdf";
-	    $fileloc = "./uploads/".$fname;
-		$pdf->Output('F',$fileloc);
-		// $pdf->Output();
-		return $fname;
+	    $fileloc = "./uploads/pdf/".$fname;
+		// $pdf->Output('F',$fileloc);
+		$pdf->Output();
+		// return $fname;
 
 
 
@@ -160,7 +160,7 @@ class M_pdf extends CI_Model {
         $pdf->SetFont('Arial','B','12');
         $pdf->Cell(10,10,"NO",1,0,'C');
         $pdf->Cell(80,10,"NAMA TRANSAKSI",1,0,'C');
-        $pdf->Cell(80,10,"NAMA PROYEK",1,0,'C');
+        $pdf->Cell(80,10,"NAMA PEKERJAAN",1,0,'C');
         $pdf->Cell(20,10,"KREDIT",1,0,'C');
         $pdf->Cell(32,10,"TANGGAL",1,0,'C');
         $pdf->Cell(40,10,"DANA",1,0,'C');
@@ -302,7 +302,7 @@ class M_pdf extends CI_Model {
     }
 
 	    $fname =  "laporan - ".$user->nama." - ".strftime('%d%m%Y', time()).".pdf";
-	    $fileloc = "./uploads/".$fname;
+	    $fileloc = "./uploads/pdf/".$fname;
 	    
 		$pdf->Output('F',$fileloc);
 		// $pdf->Output();

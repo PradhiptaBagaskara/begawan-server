@@ -7,13 +7,20 @@ class Welcome extends CI_Controller {
 	public function __construct()
 	{
 		parent::__construct();
+		$this->load->model('M_api2', 'api2');
+		$this->load->model('M_pdf', 'pdf');
 
 		//Do your magic here
 	}
 
 	public function index()
 	{
-        $this->load->view('index');
+        // $this->load->view('index');
+        // echo strftime("%A, %e %B %Y",strtotime("Thu Mar 12 18:51:52 GMT+07:00 2020"));
+        $this->pdf->laporan_proyek('1');
+        // $this->api2->insert("tgl", ["test" => "2020-03-09 19:10:71"]);
+        // $this->db->insert('tgl', array("test" => strftime("%A, %e %B %Y",strtotime("2020/03/09 19:10:71"))));
+        // $this->db->insert('tgl', array("test" => "2020-03-09"));
 // header("Content-Type: application/json");
 
 		// $t = explode(" ", "ahmad saphi i");

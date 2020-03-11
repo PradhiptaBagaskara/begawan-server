@@ -53,6 +53,7 @@ class Transaksi extends REST_Controller {
 		$keterangan = $this->post('keterangan');
 		$jenis = $this->post('jenis');
 		$id_proyek = $this->post('id_proyek');
+		$file_form = "file";
 
 
 		$res = array("status" => false,
@@ -66,9 +67,12 @@ class Transaksi extends REST_Controller {
 						"msg" => "user tidak ditemukan",
 							"result" => null);
 			if ($cek > 0) {
-				if ($jenis =="khas") {
+				$fname = $this->api2->upload_file($file_form);
+				if ($fname != null) {
 				$saldoParr = $this->userApi->get(['id' => $auth]);
 				$sal = array_shift($saldoParr);
+				if ($jenis =="khas") {
+				
 				$saldo =  $sal->saldo - $dana;
 				$this->api2->update("user", ["saldo" => $saldo], ["id" => $auth]);
 				}
@@ -82,6 +86,8 @@ class Transaksi extends REST_Controller {
 								"jenis" => $jenis,
 								"keterangan" => $keterangan,
 								"nama_transaksi" => $nama,
+								"file_name" => $fname,
+								"current_saldo" => $sal->saldo,
 								"dana" => $dana);
 
 
@@ -91,6 +97,8 @@ class Transaksi extends REST_Controller {
 							"msg" => "Transaksi Baru Telah Di Tambahkan",
 								"result" => null);
 			}
+				}
+
 			
 		}
 		$this->response($res);

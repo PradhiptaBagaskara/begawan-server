@@ -64,8 +64,7 @@ class Saldo extends REST_Controller {
 
 					if ($postSaldo != "0" && $postSaldo != "") {
 						$saldo = $saldoParr + $postSaldo;
-						$pengirim = $this->api2->get("user",['id' => $auth])->saldo;
-						$pengirimDana = $pengirim-$postSaldo;
+						$pengirimDana = $saldoParr-$postSaldo;
 							# code...
 						$this->api2->insert("khas_history", ["id_user" => $id, "id_pemodal" => $auth,
 										"saldo_awal" => $saldoParr, "saldo_masuk" => $postSaldo, "saldo_total" => $saldo,
@@ -82,10 +81,11 @@ class Saldo extends REST_Controller {
 					# code...
 				} elseif ($param == "kurang") {
 					$saldo = $saldoParr - $postSaldo;
+					$saldo = $this->api2->update("user", ["saldo" => $saldo], ['id' => $id]);
+
 
 					# code...
 				}
-				$saldo = $this->api2->update("user", ["saldo" => $saldo], ['id' => $id]);
 
 				$res = array("status" => true,
 							"msg" => "update saldo success",

@@ -31,12 +31,19 @@ use Restserver\Libraries\REST_Controller;
 						"msg" => "Tidak diijinkan",
 							"result" => null);
 				$cek_level = $this->api->cek_role($auth);
-				if ($cek_level == 2 ) {
-					$data = $this->userApi->get(["role"=>0]);
+				if ($cek_level >= 2 ) {
+					if ($cek_level == 2) {
+						# code...
+					$data = $this->api2->getAll("user",["is_admin"=>0]);
+
+					}else {
+					$data = $this->api2->getAll("user",["role <"=>1]);
+						# code...
+					}
 					$res = array("status" => true,
 						"msg" => "success",
 							"result" => $data);
-				}elseif ($cek_level == 1) {
+				}elseif ($cek_level <= 1) {
 					$this->db->where('role', 0);
 						$data =$this->db->get('user')->result();
 					$res = array("status" => true,

@@ -31,7 +31,7 @@ class Proyek extends REST_Controller {
 			if ($cek > 0) {
 				$role = $this->api->cek_role($auth);
 
-				if ($role < 1) {
+				if ($role < 2) {
 				$this->db->select('nama_proyek,id');
 				$this->db->from('proyek');
 				$data = $this->db->get()->result();
@@ -45,9 +45,9 @@ class Proyek extends REST_Controller {
 
 
 				if (!empty($id)) {
-					$this->db->query("SET lc_time_names = 'id_ID'");					
+				$this->db->query("SET lc_time_names = 'id_ID'");					
 
-				$this->db->select('ifnull(sum(transaksi.dana), "0") as total_dana, proyek.modal - ifnull(sum(transaksi.dana),"0") as sisa_modal ,proyek.id,proyek.nama_proyek,ifnull(proyek.keterangan, "Tidak Ada Catatan") as keterangan,proyek.modal, DATE_FORMAT(proyek.created_date, "%d %M %Y") as created_date');
+				$this->db->select('ifnull(sum(transaksi.dana), "0") as total_dana,ifnull(proyek.tgl_mulai, "belum di atur") as tgl_mulai, ifnull(proyek.tgl_selesai, "Belum di atur") as tgl_selesai, proyek.modal - ifnull(sum(transaksi.dana),"0") as sisa_modal ,proyek.id,proyek.nama_proyek,ifnull(proyek.keterangan, "Tidak Ada Catatan") as keterangan,proyek.modal, DATE_FORMAT(proyek.created_date, "%d %M %Y") as created_date');
 				$this->db->from('proyek');
 				$this->db->join('transaksi', 'transaksi.id_proyek = proyek.id', 'left');
 				$this->db->where('proyek.id', $id);
@@ -91,6 +91,9 @@ class Proyek extends REST_Controller {
 		$par = $this->post('param');
 		$ket = $this->post('keterangan');
 		$id = $this->post("id");
+		$aksi = $this->post('aksi');
+		$tglMulai = $this->post('mulai');
+		$tglEnd = $this->post('selesai');
 
 
 		$res = array("status" => false,
@@ -118,9 +121,15 @@ class Proyek extends REST_Controller {
 					}else{
 						$keterangan = $ket;
 					}
-					$data = array("nama_proyek" => $nama_proyek, "modal" => $modal,"keterangan" => $keterangan);
+					$pengirim = $this->api2->get("user",['id' => $auth])->saldo;
+
 
 					if ($par == "insert") {
+						$data = array("nama_proyek" => $nama_proyek, "modal" => $modal, "modal_awal" => $modal,
+							"tgl_mulai" => $tglMulai,
+							"tgl_selesai" => $tglEnd,
+							"keterangan" => $keterangan);
+
 						$insert = $this->api2->insert("proyek", $data);
 						if ($insert) {
 							$this->db->where('id', $insert);
@@ -128,21 +137,88 @@ class Proyek extends REST_Controller {
 							$res = array("status" => true,
 								"msg" => "proyek telah ditambahkan",
 									"result" => array_shift($ress));
+
+							$saldoParr = $this->userApi->get(['id' => $auth]);
+							$sal = array_shift($saldoParr);
+							$saldo = $sal->saldo - $modal;
+							$this->api2->update("user", ["saldo" => $saldo], ["id" => $auth]);
+
+							$this->api2->insert("khas_proyek", ["id_proyek" => $insert, "id_pemodal" => $auth,
+								"saldo_awal" => "0", "saldo_masuk" => $modal, "saldo_akhir" => $modal,
+								"keterangan" => $keterangan]);
+
+				
+							$this->api2->insert("khas_history", ["id_user" => $auth, 
+										"id_pemodal" => $auth,
+										"saldo_awal" => $sal->saldo, 
+										"saldo_masuk" => $modal, 
+										"saldo_total" => $saldo,
+										"jenis" => "pekerjaan",
+										"keterangan" => $keterangan]);
 						}
 
 					
 					}elseif ($par == "update") {
-						$id = $this->post("id");
-						$this->api2->update("proyek", $data, ["id" => $id]);
+						$data = array("nama_proyek" => $nama_proyek,
+							"tgl_mulai" => $tglMulai,
+							"tgl_selesai" => $tglEnd,
+							"keterangan" => $keterangan);
+
+						$insert = $this->api2->update("proyek", $data, ["id" => $id]);
+						$res = array("status" => true,
+								"msg" => "Data Berhasil di update",
+									"result" => null);
+					}
+					elseif ($par == "nilai") {
+						// $id = $this->post("id");
+						$pekerjaan = $this->api2->get("proyek", ["id" => $id]);
+						$modalAkhir = $pekerjaan->modal;
+						$saldoParr = $this->userApi->get(['id' => $auth]);
+						$sal = array_shift($saldoParr);
+
 						$res = array("status" => true,
 								"msg" => "proyek update success",
+									"result" => array());
+						if ($aksi == "tambah") {
+							$modalAkhir = $pekerjaan->modal + $modal;
+							$saldo = $sal->saldo - $modal;
+
+							$kkt = "Menambahkan Nilai Pekerjaan";
+						}elseif ($aksi == "kurang") {
+							$modalAkhir = $pekerjaan->modal - $modal;
+							$saldo = $sal->saldo + $modal;
+
+							$kkt = "Mengurangi Nilai Pekerjaan";
+							
+						}
+
+							$this->api2->update("proyek", ["modal" => $modalAkhir], ["id" => $id]);
+
+
+							
+							$this->api2->update("user", ["saldo" => $saldo], ["id" => $auth]);
+
+							$this->api2->insert("khas_proyek", ["id_proyek" => $id, "id_pemodal" => $auth,
+								"saldo_awal" => $pekerjaan->modal, "saldo_masuk" => $modal, "saldo_akhir" => $modalAkhir,
+								"keterangan" => $keterangan]);
+
+				
+							$this->api2->insert("khas_history", ["id_user" => $auth, 
+										"id_pemodal" => $auth,
+										"saldo_awal" => $sal->saldo, 
+										"saldo_masuk" => $modal, 
+										"saldo_total" => $saldo,
+										"jenis" => "pekerjaan",
+										"keterangan" => $kkt]);
+							$res = array("status" => true,
+								"msg" => "Nilai Berhasil di update",
 									"result" => array());
 					}elseif ($par == "delete") {
 						$this->api2->delete("proyek", ["id" => $id]);
 						$this->api2->delete("transaksi", ["id_proyek" => $id]);
 						$res = array("status" => true,
 							"msg" => "Data Berhasil Dihapus",
-								"result" => null);
+								"result" => array());
 					}
 
 

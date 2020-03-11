@@ -33,7 +33,7 @@ class Getpdf extends REST_Controller {
 						"msg" => "Tidak diijinkan",
 							"result" => null);
 				$cek_level = $this->api->cek_role($auth);
-				if ($cek_level == 2 ) {
+				if ($cek_level >= 2 ) {
 					$data = $this->userApi->get();
 					$res = array("status" => true,
 						"msg" => "success",
@@ -71,7 +71,7 @@ class Getpdf extends REST_Controller {
 			$res = array("status" => false,
 						"msg" => "user tidak diizinkan",
 							"result" => null);
-			if ($cek > 0) {
+			if ($cek > 1) {
 				$ids = null;
 				$fname = null;
 				$res = array("status" => false,

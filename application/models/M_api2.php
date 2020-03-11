@@ -157,20 +157,20 @@ class M_api2 extends CI_Model {
 
     public function upload_file($name_form='')
     {
-        $config['upload_path'] = './uploads/user/';    
-        $config['allowed_types'] = 'jpg|png|jpeg';    
+        $config['upload_path'] = './uploads/';    
+        $config['allowed_types'] = 'jpg|png|jpeg';
+        $config['max_size']    = '1024';     
               
         $this->load->library('upload', $config); 
         // Load konfigurasi uploadnya    
         if($this->upload->do_upload($name_form)){ 
         // Lakukan upload dan Cek jika proses upload berhasil      
         // Jika berhasil :      
-        $return = array('result' => 'success', 'file' => $this->upload->data(), 'error' => '');      
-        return $return;    
+        $return = $this->upload->data();      
+        return $return['file_name'];    
         }else{      
         // Jika gagal :      
-            $return = array('result' => 'failed', 'file' => '', 'error' => $this->upload->display_errors());
-            return $return;    
+            return NULL;    
         }
     }
 }

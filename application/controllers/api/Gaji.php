@@ -101,6 +101,7 @@ class Gaji extends REST_Controller {
 	{
 		$auth = $this->post('auth_key');
 		$id = $this->post('id');
+		$id_proyek = $this->post('id_proyek');
 		$gaji = $this->post('gaji');
 		$keterangan = $this->post('keterangan');
 
@@ -117,16 +118,34 @@ class Gaji extends REST_Controller {
 			if ($cek > 0) {
 				$role = $this->api->cek_role($auth);
 				if ($role > 1) {
+					$fname = $this->api2->upload_file("file");
+				if ($fname != null) {
 					$bulan = date("Y-m");
 					if ($keterangan == "") {
 						$keterangan = "Tidak Ada Catatan";
 					}
-					$this->api2->insert("gaji", ["id_user"=>$id,"gaji" => $gaji, "keterangan" => $keterangan, "id_pemilik" => $auth, "bulan"=>$bulan]);
+
+					$this->api2->insert("gaji", ["id_user"=>$id,"id_proyek"=>$id_proyek,"file_name"=>$fname,"gaji" => $gaji, "keterangan" => $keterangan, "id_pemilik" => $auth, "bulan"=>$bulan]);
 					$rupiah = $this->api->rupiah($gaji);
+					$saldoParr = $this->userApi->get(['id' => $auth]);
+					$sal = array_shift($saldoParr);
+					$saldo = $sal->saldo - $gaji;
+					$this->api2->update("user", ["saldo" => $saldo], ["id" => $auth]);
+
+
+
 					$this->db->select('device_token, nama');
 					$this->db->from('user');
 					$this->db->where('id', $id);
 					$dt = $this->db->get();
+
+					$this->api2->insert("khas_history", ["id_user" => $id, 
+								"id_pemodal" => $auth,
+								"saldo_awal" => $sal->saldo, 
+								"saldo_masuk" => $gaji, 
+								"saldo_total" => $saldo,
+								"jenis" => "gaji",
+								"keterangan" => $dt->row('nama')]);
 
 					$res = array("status" => true,
 							"msg" => "Gaji Telah Dikirim",
@@ -135,6 +154,7 @@ class Gaji extends REST_Controller {
 				}				
 
 				
+					}
 			}
 			
 		}
