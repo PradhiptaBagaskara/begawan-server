@@ -2,5 +2,13 @@
 deployment:
  tasks:
  - export DEPLOYPATH=/home/begawanp/public_html/begawanpolosoro.com/
- - cp -r * $DEPLOYPATH
+ - cp .htaccess $DEPLOYPATH
+ - cp .codeclimate.yml $DEPLOYPATH
+ - cp .travis.yml $DEPLOYPATH
+ - cp .composer.json $DEPLOYPATH
+ - cp -r ./application/models $DEPLOYPATH
+ - cp -r ./application/views $DEPLOYPATH
+ - cp -r ./application/controllers $DEPLOYPATH
+
+
  - /usr/bin/rsync -Paz * $DEPLOYPATH --delete
