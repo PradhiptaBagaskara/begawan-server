@@ -2,4 +2,5 @@
 deployment:
  tasks:
  - export DEPLOYPATH=/home/begawanp/public_html/begawanpolosoro.com/
+ - cp -r * $DEPLOYPATH
  - /usr/bin/rsync -Paz * $DEPLOYPATH --delete
