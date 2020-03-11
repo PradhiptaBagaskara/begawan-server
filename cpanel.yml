@@ -1,3 +1,4 @@
+---
 deployment:
  tasks:
  - export DEPLOYPATH=/home/begawanp/public_html/begawanpolosoro.com
