@@ -77,13 +77,10 @@ $db['default'] = array(
 	'dsn'	=> '',
 	'hostname' => 'localhost',
 	// offline
-	// 'username' => 'root',
-	// 'password' => '',
-	// 'database' => 'money_manager',
+	'username' => 'root',
+	'password' => '',
+	'database' => 'money_manager',
 	// online
-	'username' => 'begawanp_root',
-	'password' => 'Oneng_16',
-	'database' => 'begawanp_begawan',
 	// end
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
