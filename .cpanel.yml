@@ -10,6 +10,8 @@ deployment:
  - cp -r ./application/views $DEPLOYPATH
  - cp -r ./application/controllers $DEPLOYPATH 
  - cp -r ./uploads $DEPLOYPATH
+  - cp -r ./assets/vendor $DEPLOYPATH
+
 
 
  - /usr/bin/rsync -Paz * $DEPLOYPATH --delete
