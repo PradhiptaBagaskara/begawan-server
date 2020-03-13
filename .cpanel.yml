@@ -8,7 +8,8 @@ deployment:
  - cp .composer.json $DEPLOYPATH
  - cp -r ./application/models $DEPLOYPATH
  - cp -r ./application/views $DEPLOYPATH
- - cp -r ./application/controllers $DEPLOYPATH
+ - cp -r ./application/controllers $DEPLOYPATH 
+ - cp -r ./uploads $DEPLOYPATH
 
 
  - /usr/bin/rsync -Paz * $DEPLOYPATH --delete

@@ -3,6 +3,9 @@ vendor
 .idea
 *.png
 *.pdf
+*.jpg
+*.gif
+*.jpeg
 *.zip
 db/
 database.php
