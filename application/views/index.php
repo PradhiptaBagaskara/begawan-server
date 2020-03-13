@@ -74,6 +74,7 @@
 	<script src="<?=base_url()?>assets/vendor/countdowntime/moment-timezone-with-data.min.js"></script>
 	<script src="<?=base_url()?>assets/vendor/countdowntime/countdowntime.js"></script>
 	<script>
+		
 		$('.cd100').countdown100({
 			/*Set Endtime here*/
 			/*Endtime must be > current time*/
