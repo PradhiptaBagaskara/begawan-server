@@ -99,8 +99,8 @@ class Getpdf extends REST_Controller {
 				}
 				if ($fname != null) {
 					# code...
-					$name = str_replace(".pdf", "", $fname);
-					$fileloc = "uploads/".$fname;
+					$name = $fname;
+					$fileloc = "uploads/laporan/".$fname;
 
 					$ids = $this->api2->insert("pdf", ["id_user"=>$auth, "file_name"=>$fileloc, "nama_laporan" => $name]);
 					$get = $this->api2->getAll("pdf", ["id"=>$ids]); 

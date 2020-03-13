@@ -33,8 +33,10 @@ class Gaji extends REST_Controller {
 				$role = $this->api->cek_role($auth);
 				if ($role == 2) {
 					$this->db->query("SET lc_time_names = 'id_ID'");
-					$this->db->select('gaji.id, gaji.gaji, date_format(gaji.created_date, "%d %M %Y") as created_date, user.username, user.nama, if(gaji.id_pemilik = user.id, "",(select nama from user where id="'.$auth.'")) as nama_pengirim');
+					$this->db->select('gaji.id, gaji.gaji,gaji.keterangan, date_format(gaji.created_date, "%d %M %Y") as created_date, user.username, user.nama,
+					gaji.file_name, proyek.nama_proyek, if(gaji.id_pemilik = user.id, "",(select nama from user where id="'.$auth.'")) as nama_pengirim');
 					$this->db->from('gaji');
+					$this->db->join('proyek', 'gaji.id_proyek = proyek.id', 'left');
 					$this->db->join('user', 'gaji.id_user = user.id', 'left');
 					$this->db->order_by('created_date', 'desc');
 					if (!empty($limit)) {
@@ -66,8 +68,10 @@ class Gaji extends REST_Controller {
 					$p =$this->db->get("gaji")->row('id_pemilik');
 					$this->db->query("SET lc_time_names = 'id_ID'");						
 					
-					$this->db->select('gaji.id, gaji.gaji, date_format(gaji.created_date, "%d %M %Y") as created_date, user.username, user.nama, if(gaji.id_pemilik = user.id, "",(select nama from user as userw where id="'.$p.'")) as nama_pengirim');
+					$this->db->select('gaji.id,gaji.keterangan, gaji.gaji, date_format(gaji.created_date, "%d %M %Y") as created_date, user.username, user.nama,
+					gaji.file_name, proyek.nama_proyek, if(gaji.id_pemilik = user.id, "",(select nama from user as userw where id="'.$p.'")) as nama_pengirim');
 					$this->db->from('gaji');
+					$this->db->join('proyek', 'gaji.id_proyek = proyek.id', 'left');
 					$this->db->join('user', 'gaji.id_user = user.id', 'left');
 					$this->db->where('gaji.id_user', $auth);
 					if (!empty($limit)) {
@@ -113,20 +117,30 @@ class Gaji extends REST_Controller {
 
 			$cek = $this->api->cek_field("id", $id, "user");
 			$res = array("status" => false,
-						"msg" => "user tidak ditemukan",
+						"msg" => "user tidak ditemukan id: {$cek}-.$id",
 							"result" => null);
 			if ($cek > 0) {
 				$role = $this->api->cek_role($auth);
+				$res = array("status" => false,
+						"msg" => "user tidak diizinkan",
+							"result" => null);
 				if ($role > 1) {
+					$res = array("status" => false,
+						"msg" => "file diperlukan",
+							"result" => null);
 					$fname = $this->api2->upload_file("file");
 				if ($fname != null) {
+					$res = array("status" => true,
+						"msg" => "Gaji Berhasil dikirim",
+							"result" => null);
 					$bulan = date("Y-m");
 					if ($keterangan == "") {
 						$keterangan = "Tidak Ada Catatan";
 					}
 
-					$this->api2->insert("gaji", ["id_user"=>$id,"id_proyek"=>$id_proyek,"file_name"=>$fname,"gaji" => $gaji, "keterangan" => $keterangan, "id_pemilik" => $auth, "bulan"=>$bulan]);
+					$dataGaji = $this->api2->insert("gaji", ["id_user"=>$id,"id_proyek"=>$id_proyek,"file_name"=>$fname,"gaji" => $gaji, "keterangan" => $keterangan, "id_pemilik" => $auth, "bulan"=>$bulan]);
 					$rupiah = $this->api->rupiah($gaji);
+
 					$saldoParr = $this->userApi->get(['id' => $auth]);
 					$sal = array_shift($saldoParr);
 					$saldo = $sal->saldo - $gaji;
@@ -141,15 +155,13 @@ class Gaji extends REST_Controller {
 
 					$this->api2->insert("khas_history", ["id_user" => $id, 
 								"id_pemodal" => $auth,
+								"id_gaji" => $dataGaji,
 								"saldo_awal" => $sal->saldo, 
 								"saldo_masuk" => $gaji, 
 								"saldo_total" => $saldo,
 								"jenis" => "gaji",
 								"keterangan" => $dt->row('nama')]);
 
-					$res = array("status" => true,
-							"msg" => "Gaji Telah Dikirim",
-								"result" => null);
 					$noti = $this->api->sendNotif($id,$dt->row("device_token"), "Hi ".$dt->row('nama') ,"Gaji Telah Diterima Sebesar ". $rupiah,'0');	
 				}				
 

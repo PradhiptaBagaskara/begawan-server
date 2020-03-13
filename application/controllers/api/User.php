@@ -34,10 +34,10 @@ use Restserver\Libraries\REST_Controller;
 				if ($cek_level >= 2 ) {
 					if ($cek_level == 2) {
 						# code...
-					$data = $this->api2->getAll("user",["is_admin"=>0]);
+					$data = $this->api2->getAll("user",["is_admin ="=>0]);
 
 					}else {
-					$data = $this->api2->getAll("user",["role <"=>1]);
+					$data = $this->api2->getAll("user",["role <"=>2]);
 						# code...
 					}
 					$res = array("status" => true,

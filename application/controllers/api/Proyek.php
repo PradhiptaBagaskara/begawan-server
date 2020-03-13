@@ -112,7 +112,7 @@ class Proyek extends REST_Controller {
 				$res = array("status" => false,
 						"msg" => "user tidak diijinkan",
 							"result" => null);
-				if ($cek_role == 2) {
+				if ($cek_role >= 2) {
 						$res = array("status" => false,
 								"msg" => "wrong method!",
 									"result" => array());
@@ -153,6 +153,7 @@ class Proyek extends REST_Controller {
 										"saldo_awal" => $sal->saldo, 
 										"saldo_masuk" => $modal, 
 										"saldo_total" => $saldo,
+										"id_proyek" => $insert,										
 										"jenis" => "pekerjaan",
 										"keterangan" => $keterangan]);
 						}
@@ -205,6 +206,7 @@ class Proyek extends REST_Controller {
 				
 							$this->api2->insert("khas_history", ["id_user" => $auth, 
 										"id_pemodal" => $auth,
+										"id_proyek" => $id,
 										"saldo_awal" => $sal->saldo, 
 										"saldo_masuk" => $modal, 
 										"saldo_total" => $saldo,
@@ -214,8 +216,27 @@ class Proyek extends REST_Controller {
 								"msg" => "Nilai Berhasil di update",
 									"result" => array());
 					}elseif ($par == "delete") {
+						$this->db->select('file_name');
+						$this->db->where('id_proyek', $id);
+						$data = $this->db->get('transaksi')->result();
+						foreach ($data as $key) {
+							# code...
+							@unlink("./uploads/".$key->file_name);
+						}
+						$this->db->select('file_name');
+						$this->db->where('id_proyek', $id);
+						$da = $this->db->get('gaji')->result();
+						foreach ($da as $k) {
+							# code...
+							@unlink("./uploads/".$k->file_name);
+						}
+
+						$this->api2->delete("gaji", ["id_proyek" => $id]);
+
 						$this->api2->delete("proyek", ["id" => $id]);
 						$this->api2->delete("transaksi", ["id_proyek" => $id]);
+						$this->api2->delete("khas_proyek", ["id_proyek" => $id]);
+						$this->api2->delete("khas_history", ["id_proyek" => $id]);
 						$res = array("status" => true,
 							"msg" => "Data Berhasil Dihapus",
 								"result" => array());

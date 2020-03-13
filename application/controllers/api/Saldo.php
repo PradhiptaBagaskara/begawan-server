@@ -43,6 +43,9 @@ class Saldo extends REST_Controller {
 		$auth = $this->post('auth_key');
 		$id = $this->post('id');
 		$postSaldo = $this->post('saldo');
+		$keterangan = $this->post('keterangan');
+		
+
 		$res = array("status" => false,
 						"msg" => "Terjadi Kesalahan!",
 							"result" => null);
@@ -57,6 +60,7 @@ class Saldo extends REST_Controller {
 			if ($cek > 0) {
 
 				$saldoParr = $this->api2->get("user",['id' => $id])->saldo;
+				$sender = $this->api2->get("user",['id' => $auth])->saldo;
 
 
 				if ($param == "tambah") {
@@ -64,24 +68,50 @@ class Saldo extends REST_Controller {
 
 					if ($postSaldo != "0" && $postSaldo != "") {
 						$saldo = $saldoParr + $postSaldo;
-						$pengirimDana = $saldoParr-$postSaldo;
+						$pengirimDana = $sender-$postSaldo;
+						if ($keterangan == "") {
+							$keterangan = "Menambahkan Saldo";
+						}
 							# code...
 						$this->api2->insert("khas_history", ["id_user" => $id, "id_pemodal" => $auth,
 										"saldo_awal" => $saldoParr, "saldo_masuk" => $postSaldo, "saldo_total" => $saldo,
-										"keterangan" => "Menambahkan Saldo"]);
-						$this->api2->update("user", ["saldo" => $pengirimDana], ["id"=>$auth]);						
+										"keterangan" => $keterangan]);
+						if ($id != $auth) {
+						$this->api2->update("user", ["saldo" => $pengirimDana], ["id"=>$auth]);
 						$rupiah = $this->api->rupiah($postSaldo);
 						$this->db->select('device_token, nama');
 						$this->db->where('id', $id);
 						$dt = $this->db->get('user');
-						$noti = $this->api->sendNotif($id,$dt->row("device_token"), "Hi ".$dt->row('nama') ,"Saldo Khas Telah Di Tambahkan Senilai ". $rupiah,'0');			
+						$noti = $this->api->sendNotif($id,$dt->row("device_token"), "Hi ".$dt->row('nama') ,"Saldo Khas Telah Di Tambahkan Senilai ". $rupiah,'0');	
+							
+						}
+						$this->api2->update("user", ["saldo" => $saldo], ["id"=>$id]);
+
+												
+								
 
 					}
 
 					# code...
 				} elseif ($param == "kurang") {
+					if ($postSaldo != "") {
+						# code...
 					$saldo = $saldoParr - $postSaldo;
-					$saldo = $this->api2->update("user", ["saldo" => $saldo], ['id' => $id]);
+					$pengirimDana = $sender+$postSaldo;
+					if ($id != $auth) {
+						$this->api2->update("user", ["saldo" => $pengirimDana], ["id"=>$auth]);
+							
+						}
+					
+					$this->api2->update("user", ["saldo" => $saldo], ['id' => $id]);
+					if ($keterangan == "") {
+							$keterangan = "Mengurangi Saldo";
+						}
+					
+					$this->api2->insert("khas_history", ["id_user" => $id, "id_pemodal" => $auth,
+										"saldo_awal" => $saldoParr, "saldo_masuk" => $postSaldo, "saldo_total" => $saldo,
+										"keterangan" => $keterangan]);
+					}
 
 
 					# code...
