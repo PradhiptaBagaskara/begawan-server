@@ -12,8 +12,7 @@ class App extends CI_Controller {
 
 	public function index()
 	{
-		$data = $this->api->getUpdate();
-		// $this->load->view('download', $data);
+		$this->load->view('index');		
 	}
 
 	public function download()
