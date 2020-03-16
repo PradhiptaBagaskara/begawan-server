@@ -10,6 +10,74 @@ class M_api extends CI_Model {
  
 }
 
+	function getUpdate()
+	{
+		$tc = file_get_contents("https://raw.githubusercontent.com/PradhiptaBagaskara/begawan/master/app/release/output.json");
+		$ta = json_decode($tc,true);
+
+		
+		$arr = array();
+		foreach ($ta as $key => $value) {
+			$arr['outputName'] = $value['apkData']['outputFile'];
+			$arr['versionCode'] = $value['apkData']['versionCode'];
+			$arr['versionName'] = $value['apkData']['versionName'];
+			$arr['hash'] = md5($value['apkData']['versionName']);
+			$arr['updateRequired'] = false;
+			$arr['downloadUrl'] = "https://github.com/PradhiptaBagaskara/begawan/raw/master/app/release/".$value['apkData']['outputFile'];
+		}
+		$curl = curl_init($arr['downloadUrl']);
+ 
+		//Set CURLOPT_FOLLOWLOCATION to TRUE so that our
+		//cURL request follows any redirects.
+		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+
+		//We want curl_exec to return  the output as a string.
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+		//Set CURLOPT_HEADER to TRUE so that cURL returns
+		//the header information.
+		curl_setopt($curl, CURLOPT_HEADER, true);
+
+		//Set CURLOPT_NOBODY to TRUE to send a HEAD request.
+		//This stops cURL from downloading the entire body
+		//of the content.
+		curl_setopt($curl, CURLOPT_NOBODY, true);
+
+		//Execute the request.
+		curl_exec($curl);
+
+		//Retrieve the size of the remote file in bytes.
+		$fileSize = curl_getinfo($curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
+
+		curl_close($curl);
+		//Convert it into KB
+		$fileSizeKB = number_format(round($fileSize / 1024)/1024, 2);
+		$arr['size'] = $fileSizeKB."MB";
+
+		return $arr;
+			# code...
+	}
+
+function delete_dir($dirname) {
+     if (is_dir($dirname)){$dir_handle = opendir($dirname);}
+     if (!$dir_handle){return false;}
+     while($file = readdir($dir_handle)) {
+           if ($file != "." && $file != "..") {
+                if (!is_dir($dirname."/".$file)){@unlink($dirname."/".$file);}
+                else{
+                     delete_directory($dirname.'/'.$file);
+           }
+       }
+   }
+     
+     closedir($dir_handle);
+     rmdir($dirname);
+     mkdir($dirname);
+     $file = fopen($dirname."/index.html", "w");
+     fwrite($file, "");
+     return true;
+}
+
 
 	function sendNotif($id, $token,$title, $body,$halaman){
 		$url = "https://fcm.googleapis.com/fcm/send";
@@ -37,10 +105,8 @@ class M_api extends CI_Model {
 	    if ($response === FALSE) {
 	    die('FCM Send Error: ' . curl_error($ch));
 	    }else{
-	    	return "ss";
 	    }
 	    curl_close($ch);
-	    return;
 	  //   return '<meta http-equiv="refresh"
    // content="0; url='.base_url().'">';
 #126AAF
@@ -127,7 +193,7 @@ class M_api extends CI_Model {
 
 
 
- 	public function upload_file($name_form='')
+ 	function upload_file($name_form='')
  	{
  		$config['upload_path'] = './uploads/';    
  		$config['allowed_types'] = 'jpg|png|jpeg';    
@@ -156,4 +222,3 @@ class M_api extends CI_Model {
 
 
 
- ?>

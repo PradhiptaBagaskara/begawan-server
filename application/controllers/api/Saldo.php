@@ -69,20 +69,28 @@ class Saldo extends REST_Controller {
 					if ($postSaldo != "0" && $postSaldo != "") {
 						$saldo = $saldoParr + $postSaldo;
 						$pengirimDana = $sender-$postSaldo;
-						if ($keterangan == "") {
+						if (empty($keterangan) || $keterangan == "") {
 							$keterangan = "Menambahkan Saldo";
 						}
+						$file = $this->api2->upload_file("file", "transaksi");
 							# code...
 						$this->api2->insert("khas_history", ["id_user" => $id, "id_pemodal" => $auth,
 										"saldo_awal" => $saldoParr, "saldo_masuk" => $postSaldo, "saldo_total" => $saldo,
-										"keterangan" => $keterangan]);
+										"keterangan" => $keterangan, "file_name"=>$file]);
 						if ($id != $auth) {
 						$this->api2->update("user", ["saldo" => $pengirimDana], ["id"=>$auth]);
 						$rupiah = $this->api->rupiah($postSaldo);
 						$this->db->select('device_token, nama');
 						$this->db->where('id', $id);
 						$dt = $this->db->get('user');
+						if ($dt->row("device_token") !== NULL) {
+							try {
 						$noti = $this->api->sendNotif($id,$dt->row("device_token"), "Hi ".$dt->row('nama') ,"Saldo Khas Telah Di Tambahkan Senilai ". $rupiah,'0');	
+															
+														} catch (Exception $e) {
+															
+														}							
+						}
 							
 						}
 						$this->api2->update("user", ["saldo" => $saldo], ["id"=>$id]);
@@ -118,7 +126,7 @@ class Saldo extends REST_Controller {
 				}
 
 				$res = array("status" => true,
-							"msg" => "update saldo success",
+							"msg" => "Update Saldo Berhasil",
 								"result" => null);
 			}
 			

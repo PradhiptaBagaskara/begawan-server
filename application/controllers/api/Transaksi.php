@@ -67,7 +67,7 @@ class Transaksi extends REST_Controller {
 						"msg" => "user tidak ditemukan",
 							"result" => null);
 			if ($cek > 0) {
-				$fname = $this->api2->upload_file($file_form);
+				$fname = $this->api2->upload_file($file_form, "transaksi");
 				if ($fname != null) {
 				$saldoParr = $this->userApi->get(['id' => $auth]);
 				$sal = array_shift($saldoParr);

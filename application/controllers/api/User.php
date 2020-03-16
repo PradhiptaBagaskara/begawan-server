@@ -96,7 +96,7 @@ use Restserver\Libraries\REST_Controller;
 							
 
 	 			$response = array('status' => true,
-	 								'msg' => 'success',
+	 								'msg' => 'sukses',
 	 								'result' => $res);
 	 		 }else{
 	 		 	if ($password != "") {

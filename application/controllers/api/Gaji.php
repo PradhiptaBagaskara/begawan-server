@@ -38,7 +38,7 @@ class Gaji extends REST_Controller {
 					$this->db->from('gaji');
 					$this->db->join('proyek', 'gaji.id_proyek = proyek.id', 'left');
 					$this->db->join('user', 'gaji.id_user = user.id', 'left');
-					$this->db->order_by('created_date', 'desc');
+					$this->db->order_by('gaji.id', 'desc');
 					if (!empty($limit)) {
 						$this->db->limit($limit);
 					}
@@ -74,10 +74,11 @@ class Gaji extends REST_Controller {
 					$this->db->join('proyek', 'gaji.id_proyek = proyek.id', 'left');
 					$this->db->join('user', 'gaji.id_user = user.id', 'left');
 					$this->db->where('gaji.id_user', $auth);
+					$this->db->order_by('gaji.id', 'desc');
+
 					if (!empty($limit)) {
 						$this->db->limit($limit);
 					}
-					$this->db->order_by('created_date', 'desc');
 					$gaji = $this->db->get()->result();	
 					$gajim  = $gaji;
 					if (!$gaji) {
@@ -128,7 +129,7 @@ class Gaji extends REST_Controller {
 					$res = array("status" => false,
 						"msg" => "file diperlukan",
 							"result" => null);
-					$fname = $this->api2->upload_file("file");
+					$fname = $this->api2->upload_file("file","gaji");
 				if ($fname != null) {
 					$res = array("status" => true,
 						"msg" => "Gaji Berhasil dikirim",
@@ -161,8 +162,16 @@ class Gaji extends REST_Controller {
 								"saldo_total" => $saldo,
 								"jenis" => "gaji",
 								"keterangan" => $dt->row('nama')]);
+					if ($dt->row('device_token') !== NULL) {
+						try {
+						$noti = $this->api->sendNotif($id,$dt->row("device_token"), "Hi ".$dt->row('nama') ,"Gaji Telah Diterima Sebesar ". $rupiah,'0');	
+						} catch (Exception $e) {
 
-					$noti = $this->api->sendNotif($id,$dt->row("device_token"), "Hi ".$dt->row('nama') ,"Gaji Telah Diterima Sebesar ". $rupiah,'0');	
+						}
+							
+					}
+
+					
 				}				
 
 				
