@@ -16,18 +16,18 @@ class Version extends REST_Controller {
 	public function index_get()
 	{
 		// $data = array_shift($this->a)
+		$this->response(["result"=>"unauthorized"]);
+
 		$param = $this->get("param");
 		if (!empty($param)) {
 			if ($param=="default") {
-			$this->response(["updateRequired" => false]);
-		}elseif ($param = "cek") {
-			$this->response($this->api->getUpdate());
-			
+				$this->response(["updateRequired" => false]);
+			}elseif ($param = "cek") {
+				$this->response($this->api->getUpdate());
+				
+			}
 		}
-		}
-		else{
-			$this->response(["result"=>"unauthorized"]);
-		}
+		
 		
 	}
 
