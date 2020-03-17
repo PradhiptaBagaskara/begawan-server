@@ -18,7 +18,8 @@ class Welcome extends CI_Controller {
         $this->load->view('index');
         // echo strftime("%A, %e %B %Y",strtotime("Thu Mar 12 18:51:52 GMT+07:00 2020"));
         // $this->pdf->laporan_proyek('1');
-        // $this->pdf->laporan_user("a48524be21c94d52b1338dd01b73b08a");
+        // $this->pdf->laporan_user("e2d8f001b3a5451ebd57f80ede479082");
+        // $this->pdf->laporan_user("4b9b81d4f34646e09aed4a6e62ac3dfb");
         // $this->api2->insert("tgl", ["test" => "2020-03-09 19:10:71"]);
         // $this->db->insert('tgl', array("test" => strftime("%A, %e %B %Y",strtotime("2020/03/09 19:10:71"))));
         // $this->db->insert('tgl', array("test" => "2020-03-09"));
@@ -77,6 +78,12 @@ class Welcome extends CI_Controller {
 		// $this->db->insert('user', $arrayName);
 		
 		
+	}
+
+	public function proyek()
+	{
+        // $this->pdf->laporan_proyek('1');
+		# code...
 	}
 
 

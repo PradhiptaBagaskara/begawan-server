@@ -89,6 +89,7 @@ class Transaksi extends REST_Controller {
 								"file_name" => $fname,
 								"current_saldo" => $sal->saldo,
 								"dana" => $dana);
+				$this->api->sendNotif($auth, "/topics/transaksi", $sal->nama, "Melakukan Transaksi Baru dengan dana {$dana}", "0");
 
 
 				$this->api2->insert("transaksi", $data);

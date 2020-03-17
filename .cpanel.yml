@@ -2,10 +2,12 @@
 deployment:
  tasks:
  - export DEPLOYPATH=/home/begawanp/public_html/begawanpolosoro.com/
+ - export APPPATH=/home/begawanp/public_html/begawanpolosoro.com/application/
  - cp .htaccess $DEPLOYPATH
- - cp -r ./application/models $DEPLOYPATH/application
- - cp -r ./application/views $DEPLOYPATH/application
- - cp -r ./application/controllers $DEPLOYPATH/application 
+ - cp -r ./application/models $APPPATH
+ - cp -r ./application/views $APPPATH
+ - cp -r ./application/controllers $APPPATH 
+ - cp -r ./application/third_party $APPPATH
  - cp -r ./uploads $DEPLOYPATH 
 
  - /usr/bin/rsync -Paz * $DEPLOYPATH --delete
