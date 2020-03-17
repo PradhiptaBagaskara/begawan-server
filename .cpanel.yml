@@ -8,6 +8,5 @@ deployment:
  - cp -r ./application/views $APPPATH
  - cp -r ./application/controllers $APPPATH 
  - cp -r ./application/third_party $APPPATH
- - cp -r ./uploads $DEPLOYPATH 
 
  - /usr/bin/rsync -Paz * $DEPLOYPATH --delete
