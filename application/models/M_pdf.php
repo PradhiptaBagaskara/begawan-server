@@ -385,7 +385,7 @@ class M_pdf extends CI_Model {
 	    
 		$pdf->Output('F',$fileloc);
 		// $pdf->Output();
-		// return $fname;
+		return $fname;
 
 
 
