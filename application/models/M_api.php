@@ -12,7 +12,8 @@ class M_api extends CI_Model {
 
 	function getUpdate()
 	{
-		$tc = file_get_contents("https://raw.githubusercontent.com/PradhiptaBagaskara/begawan/master/app/release/output.json");
+		// $tc = file_get_contents("https://raw.githubusercontent.com/PradhiptaBagaskara/begawan/master/app/release/output.json");
+		$tc = file_get_contents(base_url()."/uploads/"."output.json");
 		$ta = json_decode($tc,true);
 
 		
@@ -23,7 +24,9 @@ class M_api extends CI_Model {
 			$arr['versionName'] = $value['apkData']['versionName'];
 			$arr['hash'] = md5($value['apkData']['versionName']);
 			$arr['updateRequired'] = false;
-			$arr['downloadUrl'] = "https://github.com/PradhiptaBagaskara/begawan/raw/master/app/release/".$value['apkData']['outputFile'];
+			$arr['downloadUrl'] = base_url()."/uploads/".$value['apkData']['outputFile'];
+
+			// $arr['downloadUrl'] = "https://github.com/PradhiptaBagaskara/begawan/raw/master/app/release/".$value['apkData']['outputFile'];
 		}
 		$curl = curl_init($arr['downloadUrl']);
  
@@ -53,6 +56,7 @@ class M_api extends CI_Model {
 		//Convert it into KB
 		$fileSizeKB = number_format(round($fileSize / 1024)/1024, 2);
 		$arr['size'] = $fileSizeKB."MB";
+		$arr['bytes'] = $fileSize;
 
 		return $arr;
 			# code...

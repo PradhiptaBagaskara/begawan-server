@@ -16,6 +16,8 @@ class Welcome extends CI_Controller {
 	public function index()
 	{
         $this->load->view('index');
+        // $this->api2->update("transaksi", ["status"=>"lunas"], ["id"=>"9"]);
+					
         // echo strftime("%A, %e %B %Y",strtotime("Thu Mar 12 18:51:52 GMT+07:00 2020"));
         // $this->pdf->laporan_proyek('1');
         // $this->pdf->laporan_user("e2d8f001b3a5451ebd57f80ede479082");

@@ -89,6 +89,9 @@ class Transaksi extends REST_Controller {
 								"file_name" => $fname,
 								"current_saldo" => $sal->saldo,
 								"dana" => $dana);
+				if ($jenis == "utang") {
+					$data['status'] = "belum lunas";
+				}
 				$this->api->sendNotif($auth, "/topics/transaksi", $sal->nama, "Melakukan Transaksi Baru dengan dana {$dana}", "0");
 
 

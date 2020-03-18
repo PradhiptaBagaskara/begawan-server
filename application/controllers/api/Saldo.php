@@ -28,9 +28,14 @@ class Saldo extends REST_Controller {
 							"result" => null);
 			if ($cek > 0) {
 				$saldo = $this->api2->get("user",['id' => $auth]);
+				$this->db->select('sum(dana) as dana');
+				$this->db->from('transaksi');
+				$this->db->where('jenis', "utang");
+				$this->db->where('status', "belum lunas");
+				$utang =$this->db->get()->row("dana");
 				$res = array("status" => true,
 							"msg" => "success",
-								"result" => array('saldo' => $saldo->saldo));
+								"result" => array('saldo' => $saldo->saldo, "total_piutang"=>$utang));
 			}
 			
 		}
