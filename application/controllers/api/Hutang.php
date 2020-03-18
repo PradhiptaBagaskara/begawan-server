@@ -20,6 +20,7 @@ class Hutang extends REST_Controller {
 	$res = array("status" => false,
 				"msg" => "Terjadi Kesalahan!",
 					"result" => null);
+	$this->response($res);
 	}
 
 	public function index_post()

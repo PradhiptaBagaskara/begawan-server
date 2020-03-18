@@ -56,8 +56,3 @@ class Fcmtoken extends REST_Controller {
 
 }
 
-/* End of file Saldo.php */
-/* Location: ./application/controllers/api/Saldo.php */
-
-
- ?>
