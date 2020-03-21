@@ -34,6 +34,7 @@ class M_userApi extends CI_Model {
                 $this->db->where(self::PRI_INDEX, $where);
             }
         }
+        $this->db->where('is_active', '1');        
         $this->db->order_by('nama');
 
         $result = $this->db->get()->result();

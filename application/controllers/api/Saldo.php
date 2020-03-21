@@ -29,10 +29,13 @@ class Saldo extends REST_Controller {
 			if ($cek > 0) {
 				$saldo = $this->api2->get("user",['id' => $auth]);
 				$this->db->select('sum(dana) as dana');
-				$this->db->from('transaksi');
 				$this->db->where('jenis', "utang");
+				$this->db->where('id_user', $auth);
 				$this->db->where('status', "belum lunas");
-				$utang =$this->db->get()->row("dana");
+				$utang =$this->db->get("transaksi")->row("dana");
+				if ($utang === NULL) {
+					$utang = 0;
+				}
 				$res = array("status" => true,
 							"msg" => "success",
 								"result" => array('saldo' => $saldo->saldo, "total_piutang"=>$utang));
@@ -82,20 +85,21 @@ class Saldo extends REST_Controller {
 						$this->api2->insert("khas_history", ["id_user" => $id, "id_pemodal" => $auth,
 										"saldo_awal" => $saldoParr, "saldo_masuk" => $postSaldo, "saldo_total" => $saldo,
 										"keterangan" => $keterangan, "file_name"=>$file]);
+
 						if ($id != $auth) {
-						$this->api2->update("user", ["saldo" => $pengirimDana], ["id"=>$auth]);
-						$rupiah = $this->api->rupiah($postSaldo);
-						$this->db->select('device_token, nama');
-						$this->db->where('id', $id);
-						$dt = $this->db->get('user');
-						if ($dt->row("device_token") !== NULL) {
-							try {
-						$noti = $this->api->sendNotif($id,$dt->row("device_token"), "Hi ".$dt->row('nama') ,"Saldo Khas Telah Di Tambahkan Senilai ". $rupiah,'0');	
-															
-														} catch (Exception $e) {
-															
-														}							
-						}
+							$this->api2->update("user", ["saldo" => $pengirimDana], ["id"=>$auth]);
+							$rupiah = $this->api->rupiah($postSaldo);
+							$this->db->select('device_token, nama');
+							$this->db->where('id', $id);
+							$dt = $this->db->get('user');
+							if ($dt->row("device_token") !== NULL) {
+								try {
+								$noti = $this->api->sendNotif($id,$dt->row("device_token"), "Hi ".$dt->row('nama') ,"Saldo Khas Telah Di Tambahkan Senilai ". $rupiah,'0');	
+																
+															} catch (Exception $e) {
+																
+															}							
+							}
 							
 						}
 						$this->api2->update("user", ["saldo" => $saldo], ["id"=>$id]);

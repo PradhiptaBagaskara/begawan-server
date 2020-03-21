@@ -33,6 +33,9 @@ class M_api2 extends CI_Model {
                 $this->db->where(self::PRI_INDEX, $where);
             }
         }
+        if ($table_name == "user") {
+        $this->db->where('is_active', '1');            
+        }
         $result = $this->db->get()->result();
         if ($result) {
             if ($where !== NULL) {
@@ -52,6 +55,7 @@ class M_api2 extends CI_Model {
         $this->db->from('transaksi');
         $this->db->join('user', 'transaksi.id_user = user.id', 'left');
         $this->db->join('proyek', 'transaksi.id_proyek = proyek.id', 'left');
+        $this->db->where('user.is_active', 1);
         if ($index !== NULL ) {
            $this->db->limit($index);
         }
@@ -97,6 +101,9 @@ class M_api2 extends CI_Model {
             } else {
                 $this->db->where(self::PRI_INDEX, $where);
             }
+        }
+         if ($table_name == "user") {
+        $this->db->where('is_active', '1');            
         }
         $result = $this->db->get()->result();
         if ($result) {

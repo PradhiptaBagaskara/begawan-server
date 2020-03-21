@@ -31,7 +31,7 @@ class Transaksi extends REST_Controller {
 					$saldo = $this->api2->getTx(null, 5);
 					# code...
 				}else{
-				$saldo = $this->api2->getTx(['id_user' => $auth]);
+				$saldo = $this->api2->getTx(['id_user' => $auth],100);
 
 				}
 				$res = array("status" => true,

@@ -51,10 +51,11 @@ class Proyek extends REST_Controller {
 				$this->db->from('proyek');
 				$this->db->join('transaksi', 'transaksi.id_proyek = proyek.id', 'left');
 				$this->db->where('proyek.id', $id);
+				// $this->db->where('user.is_active', 1);
 				$this->db->order_by('created_date', 'desc');
 				$proyek = $this->db->get()->result();
 
-				$tx = $this->api2->getTx(['id_proyek' => $id]);
+				$tx = $this->api2->getTx(['id_proyek' => $id], 100);
 					
 				}else{
 					$this->db->query("SET lc_time_names = 'id_ID'");					

@@ -157,6 +157,7 @@ class Gaji extends REST_Controller {
 					$this->api2->insert("khas_history", ["id_user" => $id, 
 								"id_pemodal" => $auth,
 								"id_gaji" => $dataGaji,
+								"id_proyek" => $id_proyek,
 								"saldo_awal" => $sal->saldo, 
 								"saldo_masuk" => $gaji, 
 								"saldo_total" => $saldo,

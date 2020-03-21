@@ -35,6 +35,7 @@ use Restserver\Libraries\REST_Controller;
  			$var =  $this->api->cek_pass('username', $username, $password);
 
  			if ($var) {
+				$this->db->where('is_active', '1');
  				$this->db->where('username', $username);
  				$result = $this->db->get("user")->result();
  				$res = array_shift($result);

@@ -60,7 +60,8 @@ class Hutang extends REST_Controller {
 										"saldo_masuk" => $postSaldo, 
 										"saldo_total" => $curent,
 										"id_proyek" => $id_proyek->id_proyek,										
-										"jenis" => "transaksi",
+										"id_transaksi" => $id,										
+										"jenis" => "piutang",
 										"keterangan" => "Pelunasan Piutang"]);
 					# code...
 				}elseif ($param == "all") {
@@ -81,7 +82,8 @@ class Hutang extends REST_Controller {
 								"saldo_masuk" => $key->dana, 
 								"saldo_total" => $curent,
 								"id_proyek" => $key->id_proyek,										
-								"jenis" => "transaksi",
+								"jenis" => "piutang",
+								"admin" => "1",
 								"keterangan" => "Pelunasan Piutang"]);
 					}
 						$res = array("status" => true,

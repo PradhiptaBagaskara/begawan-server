@@ -48,19 +48,19 @@ class Delete extends REST_Controller {
 							"result" => null);
 				if ($param == "user") {
 					# code...
-				$this->api2->delete("user", ["id" => $id]);
+				$this->api2->update("user",["is_active" => "0"], ["id" => $id]);
 				}elseif ($param = "reset") {
 					$this->api->delete_dir("./uploads/laporan");
 					$this->api->delete_dir("./uploads/gaji");
 					$this->api->delete_dir("./uploads/transaksi");
 					$this->db->delete('user', ['role !=' =>2]);
-					$this->db->delete('transaksi', ["id !="=>0]);
-					$this->db->delete('khas_proyek',["id !="=>0]);
-					$this->db->delete('khas_history',["id !="=>0]);
-					$this->db->delete('transaksi',["id !="=>0]);
-					$this->db->delete('gaji',["id !="=>0]);
-					$this->db->delete('proyek',["id !="=>0]);
-					$this->db->delete('pdf',["id !="=>0]);
+					$this->db->empty_table('transaksi');
+					$this->db->empty_table('khas_proyek');
+					$this->db->empty_table('khas_history');
+					$this->db->empty_table('transaksi');
+					$this->db->empty_table('gaji');
+					$this->db->empty_table('proyek');
+					$this->db->empty_table('pdf');
 						$res = array("status" => true,
 						"msg" => "Data Berhasil Dihapus",
 							"result" => null);
