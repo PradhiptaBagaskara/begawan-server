@@ -194,8 +194,8 @@ class M_pdf extends CI_Model {
 
 	    $fname =  "laporan - ".$proyek->nama_proyek." - ".strftime('%d%m%Y', time()).".pdf";
 	    $fileloc = "./uploads/laporan/".$fname;
-		// $pdf->Output('F',$fileloc);
-		$pdf->Output();
+		$pdf->Output('F',$fileloc);
+		// $pdf->Output();
 		return $fname;
 
 
@@ -986,8 +986,8 @@ class M_pdf extends CI_Model {
 	    $fname =  "laporan - ".$user->nama." - ".strftime('%d%m%Y', time()).".pdf";
 	    $fileloc = "./uploads/laporan/".$fname;
 	    
-		// $pdf->Output('F',$fileloc);
-		$pdf->Output();
+		$pdf->Output('F',$fileloc);
+		// $pdf->Output();
 		return $fname;
 
 
