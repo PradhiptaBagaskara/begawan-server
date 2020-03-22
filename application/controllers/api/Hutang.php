@@ -84,7 +84,7 @@ class Hutang extends REST_Controller {
 								"saldo_total" => $curent,
 								"id_proyek" => $key->id_proyek,										
 								"jenis" => "piutang",
-								"id_transaksi" => $id,										
+								"id_transaksi" => $key->id,							
 
 								"admin" => "1",
 								"keterangan" => "Pelunasan Piutang"]);

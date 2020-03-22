@@ -92,7 +92,12 @@ class Transaksi extends REST_Controller {
 				if ($jenis == "utang") {
 					$data['status'] = "belum lunas";
 				}
+				try {
 				$this->api->sendNotif($auth, "/topics/transaksi", $sal->nama, "Melakukan Transaksi Baru dengan dana {$dana}", "0");
+					
+				} catch (Exception $e) {
+					
+				}
 
 
 				$this->api2->insert("transaksi", $data);
